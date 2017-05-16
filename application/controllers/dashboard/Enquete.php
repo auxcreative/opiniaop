@@ -28,13 +28,13 @@ class Enquete extends CI_Controller {
 
 		//esta_logado();
 
-		set_tema('conteudo', load_modulo_dash('view_enquete_cadastro'));
+		set_tema('conteudo', load_modulo_dash('view_dash_enquete_cadastro'));
 		load_template();
 	}
 
 	//função para cadastrar
 
-	public function cadastrar($val1='',$val2='',$val3='') {
+	public function cadastro($val1='',$val2='',$val3='') {
 
 		//Validação
 		$this -> form_validation -> set_rules('nome', 'Nome do erro', 'required|trim|is_unique["tema.nome"]');

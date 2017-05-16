@@ -45,7 +45,7 @@ function get_tema() {
 }
 
 //Inicializa o painel adm carregando os recursos necessários
-//Inicializa o painel adm carregando os recursos necessários
+
 function init_login() {
 
 	$AUX = &get_instance();
@@ -63,6 +63,7 @@ function init_login() {
 	'site/vendor/font-awesome/css/font-awesome.min', 
 	'site/vendor/magnific-popup/magnific-popup', 
 	'site/css/app')), FALSE);
+	
 	set_tema('footerinc', load_js(array('site/vendor/jquery/jquery.min', 
 	'site/vendor/tether/tether.min', 
 	'site/vendor/bootstrap/js/bootstrap.min', 
@@ -79,6 +80,8 @@ function init_site() {
 
 	$AUX -> load -> library(array('sistema', 'session', 'form_validation', 'parser', 'upload'));
 	$AUX -> load -> helper(array('form', 'url', 'array', 'text', 'html', 'date', 'string', 'download'));
+	
+	$AUX -> load -> model('Crud_model', 'crud');
 
 	set_tema('titulo', 'Pesquisa de mercado, opinião e enquetes online');
 	set_tema('rodape', '<p class="rodape">Opiniãopop &copy; 2017</p>');
@@ -89,6 +92,8 @@ function init_site() {
 
 function init_dash() {
 	$AUX = &get_instance();
+	
+	$AUX ->load->model('crud_model','crud');
 
 
 	$AUX -> load -> library(array('sistema', 'session', 'form_validation', 'parser', 'upload'));
@@ -96,18 +101,15 @@ function init_dash() {
 
 	set_tema('titulo', 'Opiniãopop Painel de administracao');
 	set_tema('rodape', '<p class="rodape">Opiniãopop &copy; 2017</p>');
-	set_tema('template', 'template_main');
+	set_tema('template', 'template_dash');
 	set_tema('headerinc', load_css(array(
 						'dash/assets/css/vendor',
 						'dash/assets/css/flat-admin',
-						'dash/assets/css/theme/blue-sky','dash/assets/css/bootstrapValidator.min')), FALSE);
+						'dash/assets/css/theme/red')), FALSE);
 	
-	set_tema('footerinc', load_js(array('dash/assets/js/vendor','dash/assets/js/app')), FALSE);	
-	set_tema('headerinc', load_css(array('creative.min', 'vendor/bootstrap/css/bootstrap.min', 'vendor/font-awesome/css/font-awesome.min', 'vendor/magnific-popup/magnific-popup', 'app')), FALSE);
-	set_tema('footerinc', load_js(array('vendor/jquery/jquery.min', 'vendor/tether/tether.min', 'vendor/bootstrap/js/bootstrap.min', 
-	'vendor/jquery-easing/jquery.easing.min', 'vendor/scrollreveal/scrollreveal.min', 
-	'vendor/magnific-popup/jquery.magnific-popup.min',
-	'creative.min','dash/assets/js/bootstrapValidator.min')), FALSE);
+	set_tema('footerinc', load_js(array('dash/assets/js/vendor',
+										'dash/assets/js/app')), FALSE);	
+
 
 }
 

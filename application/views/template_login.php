@@ -22,11 +22,9 @@
   	  <div class="container-fluid">     
                {conteudo}
                 <!-- /.row -->
-
-            </div>
+      </div>
             <!-- /.container-fluid -->    
       
 {footerinc}
-
   </body>
 </html>

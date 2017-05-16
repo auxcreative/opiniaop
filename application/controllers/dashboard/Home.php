@@ -1,12 +1,12 @@
-<?php if (!defined('BASEPATH'))	exit('No direct script access allowed');
+<?php
+if (!defined('BASEPATH'))
+	exit('No direct script access allowed');
 
 class Home extends CI_Controller {
 
 	public function __construct() {
 		parent::__construct();
-		init_site();
-		//$this -> load -> model('produto_model', 'produto');
-
+		init_dash();
 	}
 
 	/**
@@ -25,23 +25,14 @@ class Home extends CI_Controller {
 	 * @see http://codeigniter.com/user_guide/general/urls.html
 	 */
 	public function index() {
-		
-		
-		$planos = array('select',
-						'table'=>'plano',
-						'where'=>array('status'=>'a'));
-						
-		//Sql				
-		$dados['planos'] = $this->crud->select($planos)->result();
-		$dados['quantidade'] = $this->crud->select($planos)->num_rows();
-		
-		set_tema('conteudo', load_modulo_site('view_inicio',$dados), FALSE);		
-		set_tema('footerinc', load_js(array('site/js/load_pages')), FALSE);
+
+		//esta_logado();
+
+		set_tema('conteudo', load_modulo_dash('view_dash_home'));
 		load_template();
 	}
-
 
 }
 
 /* End of file welcome.php */
-/* Location: ./application/controllers/Home.php */
+/* Location: ./application/controllers/.php */

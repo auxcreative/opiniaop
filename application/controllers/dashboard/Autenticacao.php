@@ -6,6 +6,7 @@ Class Autenticacao extends CI_Controller {
 
 	public function __construct() {
 		parent::__construct();
+		
 		init_login();
 	}
 
@@ -115,7 +116,7 @@ Class Autenticacao extends CI_Controller {
 		$this -> form_validation -> set_rules('confirma_senha', 'Confirmação de senha', 'required|trim|sha1');
 		//$this->form_validation->set_rules('id_plano','id_plano','required|trim');
 
-		if ($this -> form_validation -> run() == FALSE) {
+		if ($this -> form_validation -> run()) {
 
 			$dados = elements(array('nome', 'email', 'senha'), $this -> input -> post());
 

@@ -10,43 +10,35 @@ function recoverPassword() {
 	if (botao.attr('class') === 'btn-recover') {
 		div.slideToggle('slow', function() {
 			//callback
-			$('.recover').slideToggle('slow');
+			$('#recover').slideToggle('slow');
 		});
 
 	}
 	
 	//Recuperacao de senha --> Login
-	if (botao.attr('id') === 'btn-login') {
+	if (botao.attr('class') === 'btn-login') {
 		div.slideToggle('slow', function() {
 			//callback
-			$('.login').slideToggle('slow');
+			$('#login').slideToggle('slow');
 		});
 
 	}
 	
 	//Login --> Cadastro
-	if (botao.attr('id') === 'btn-addition') {		
+	if (botao.attr('class') === 'btn-addition') {		
 		div.slideToggle('slow', function() {
 			//callback
-			$('.addition').slideToggle('slow');
+			$('#addition').slideToggle('slow');
 		});
 
 	}
 	
-	//Cadastro --> login
-	if (botao.attr('id') === 'btn-voltar') {		
-		div.slideToggle('slow', function() {
-			//callback
-			$('.login').slideToggle('slow');
-		});
-
-	}
 
 };
 
 function initCode() {
 
-	$('.btn-recover, #btn-login, #btn-voltar, #btn-addition').on('click', (recoverPassword));
+	$('.btn-recover, .btn-login, .btn-addition').on('click', (recoverPassword));
 
 }
 

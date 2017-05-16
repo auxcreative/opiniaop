@@ -208,15 +208,26 @@ Project Name
 	<div class="container content">
 	<div class="row">
 		<!-- Pricing -->
-		<div class="col-md-3">
-			<div class="pricing hover-effect">
-				<div class="pricing-head">
-					<h3>Free <span>
+		<?php 
+		$indice = 0;
+		foreach($planos as $plan): 
+			//Quebra o valor em decimal e centesimos
+			$val = explode('.', $plan->valor);
+			
+			//Qtd < 3 linhas recebem 4 
+			$col = ($quantidade < 4) ? '4' : '3';
+			$off = 12 - (4 * $quantidade); 
+			$offset = $off / 2; ?>
+			
+		<div class="col-md-<?php echo $col; echo ($indice == 0) ?' offset-md-'.$offset : '';  ?>">
+			<div class="col-md-12">			
+			<div class="pricing hover-effect <?php echo ($plan->recomendado == 'r') ? 'pricing-active' : ''; ?>">
+				<div class="pricing-head <?php echo ($plan->recomendado == 'r') ? 'pricing-head-active' : ''; ?>">
+					<h3><?php echo $plan->nome ?> <span>
 					Plano para iniciantes </span>
 					</h3>
-					<h4><i>R$</i>0<i>.00</i>
-					<span>
-					Ilimitado </span>
+					<h4><i>R$</i><?php echo $val[0]; ?><i>.<?php echo $val[1];  ?></i>
+					<span><?php echo ($plan->qtd_tempo == 0) ? 'Ilimitado' : $plan->qtd_tempo.'/mêses'; ?></span>
 					</h4>
 				</div>
 				<ul class="pricing-content list-unstyled">
@@ -234,132 +245,17 @@ Project Name
 					</li>
 				</ul>
 				<div class="pricing-footer">
-					<p>
-						 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Compartilhamento de enquetes magna psum olor .
-					</p>
-					<a href="javascript:;" class="btn yellow-crusta">
+					<p><?php echo $plan->acessos ?></p>
+					<a href="<?php echo base_url('dashboard/autenticacao/criar_conta'); ?>" class="btn yellow-crusta">
 					Contrate
 					</a>
 				</div>
 			</div>
-		</div>
-		<div class="col-md-3">
-			<div class="pricing hover-effect">
-				<div class="pricing-head">
-					<h3>Begin <span>
-					Officia deserunt mollitia </span>
-					</h3>
-					<h4><i>R$</i>100<i>.00</i>
-					<span>
-					Por Mês </span>
-					</h4>
-				</div>
-				<ul class="pricing-content list-unstyled">
-					<li>
-						Criação de enquetes
-					</li>
-					<li>
-						Criação de pesquisas de mercado
-					</li>
-					<li>
-						Criação de relatórios simples
-					</li>
-					<li>
-						Compartilhamento de enquetes
-					</li>
-					<li>
-						Acompanhamento em tempo real via e-mail
-					</li>
-				</ul>
-				<div class="pricing-footer">
-					<p>
-						 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Compartilhamento de enquetes magna psum olor .
-					</p>
-					<a href="javascript:;" class="btn yellow-crusta">
-					Contrate
-					</a>
-				</div>
 			</div>
 		</div>
-		<div class="col-md-3">
-			<div class="pricing pricing-active hover-effect">
-				<div class="pricing-head pricing-head-active">
-					<h3>Pro <span>
-					Officia deserunt mollitia </span>
-					</h3>
-					<h4><i>R$</i>170<i>.00</i>
-					<span>
-					Por Mês </span>
-					</h4>
-				</div>
-				<ul class="pricing-content list-unstyled">
-					<li>
-						Criação de enquetes
-					</li>
-					<li>
-						Criação de pesquisas de mercado
-					</li>
-					<li>
-						Criação de relatórios simples
-					</li>
-					<li>
-						Compartilhamento de enquetes
-					</li>
-					<li>
-						Acompanhamento em tempo real via e-mail
-					</li>
-				</ul>
-				<div class="pricing-footer">
-					<p>
-						 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Compartilhamento de enquetes magna psum olor .
-					</p>
-					<a href="javascript:;" class="btn yellow-crusta">
-					Contrate
-					</a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-3">
-			<div class="pricing hover-effect">
-				<div class="pricing-head">
-					<h3>Expert <span>
-					Officia deserunt mollitia </span>
-					</h3>
-					<h4><i>R$</i>250<i>.00</i>
-					<span>
-					Por Mês </span>
-					</h4>
-				</div>
-				<ul class="pricing-content list-unstyled">
-					<li>
-						Criação de enquetes
-					</li>
-					<li>
-						Criação de pesquisas de mercado
-					</li>
-					<li>
-						Criação de relatórios simples
-					</li>
-					<li>
-						Compartilhamento de enquetes
-					</li>
-					<li>
-						Acompanhamento em tempo real via e-mail
-					</li>
-					<li>
-						Acompanhamento em tempo real via sms
-					</li>
-				</ul>
-				<div class="pricing-footer">
-					<p>
-						 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Compartilhamento de enquetes magna psum olor .
-					</p>
-					<a href="javascript:;" class="btn yellow-crusta">
-					Contrate
-					</a>
-				</div>
-			</div>
-		</div>
+		<?php 
+		$indice++;
+		endforeach; ?>
 		<!--//End Pricing -->
 	</div>
 </div>
