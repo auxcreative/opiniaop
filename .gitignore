@@ -12,6 +12,13 @@ system/*
 user_guide/*
 img/logo/Thumbs.db
 
+#pastasignoradasPlatform
+application/controllers/dashboard/*
+application/views/dashboard/*
+dash/*
+
+
+
 
 #arquivos ignorados
 license.txt
@@ -20,4 +27,5 @@ database.php
 index.php
 .project
 localhost.sql
+opnpop.rar
 
