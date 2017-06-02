@@ -26,7 +26,8 @@ class Home extends CI_Controller {
 	 */
 	public function index() {
 		
-		
+		$this->load->library('encryption');
+			
 		$planos = array('select',
 						'table'=>'plano',
 						'where'=>array('status'=>'a'));
@@ -34,6 +35,7 @@ class Home extends CI_Controller {
 		//Sql				
 		$dados['planos'] = $this->crud->select($planos)->result();
 		$dados['quantidade'] = $this->crud->select($planos)->num_rows();
+		
 		
 		set_tema('conteudo', load_modulo_site('view_inicio',$dados), FALSE);		
 		set_tema('footerinc', load_js(array('site/js/load_pages')), FALSE);

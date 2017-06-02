@@ -1,4 +1,6 @@
+
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php $this->benchmark->mark('code_start'); ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 	<head>
@@ -11,13 +13,23 @@
 		<!-- Bootstrap -->
 
 		{headerinc}
-
 		<!-- HTML5 shim e Respond.js para suporte no IE8 de elementos HTML5 e media queries -->
 		<!-- ALERTA: Respond.js não funciona se você visualizar uma página file:// -->
 		<!--[if lt IE 9]>
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 		<![endif]-->
+		<!-- Hotjar Tracking Code for opiniaopop.com.br -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:513037,hjsv:5};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
 	</head>
 	<body>
 		<div class="app app-default">
@@ -25,7 +37,7 @@
 			<div class="container-fluid">
 				<aside class="app-sidebar" id="sidebar">
 					<div class="sidebar-header">
-						<a class="sidebar-brand" href="#"><span class="highlight">Flat v3</span> Admin</a>
+						<a class="sidebar-brand" href="#"><span class="highlight">Opiniãopop</span> Admin</a>
 						<button type="button" class="sidebar-toggle">
 							<i class="fa fa-times"></i>
 						</button>
@@ -33,21 +45,21 @@
 					<div class="sidebar-menu">
 						<ul class="sidebar-nav">
 							<li class="active">
-								<a href="./index.html">
+								<a href="<?php echo base_url('dashborad/pesquisas'); ?>">
 								<div class="icon">
 									<i class="fa fa-tasks" aria-hidden="true"></i>
 								</div>
 								<div class="title">
-									Dashboard
+									Pesquisas
 								</div> </a>
 							</li>
 							<li class="@@menu.messaging">
-								<a href="./messaging.html">
+								<a href="<?php echo base_url('dashboard/enquete'); ?>">
 								<div class="icon">
 									<i class="fa fa-comments" aria-hidden="true"></i>
 								</div>
 								<div class="title">
-									Messaging
+									Enquetes
 								</div> </a>
 							</li>
 							<li class="dropdown ">
@@ -173,7 +185,7 @@
 									Dashboard
 								</li>
 								<li class="navbar-search hidden-sm">
-									<input id="search" type="text" placeholder="Search..">
+									<input id="search" type="text" placeholder="Pesquisar..">
 									<button class="btn-search">
 										<i class="fa fa-search"></i>
 									</button>
@@ -317,11 +329,11 @@
 									</div> </a>
 									<div class="dropdown-menu">
 										<div class="profile-info">
-											<h4 class="username">Scott White</h4>
+											<h4 class="username"><?php echo $this->session->userdata('user_nome');  ?></h4>
 										</div>
 										<ul class="action">
 											<li>
-												<a href="#"> Profile </a>
+												<a href="<?php echo base_url('dashboard/usuario/conta') ?>"> Conta </a>
 											</li>
 											<li>
 												<a href="#"> <span class="badge badge-danger pull-right">5</span> My Inbox </a>
@@ -330,7 +342,7 @@
 												<a href="#"> Setting </a>
 											</li>
 											<li>
-												<a href="#"> Logout </a>
+												<a href="<?php echo base_url('dashboard/autenticacao/logout') ?>"> Sair </a>
 											</li>
 										</ul>
 									</div>
@@ -368,15 +380,16 @@
 				
 				<!--Painel principal--->
 				<div class="container-fluid">
-					
+
 						{conteudo}
-				
+			
 				</div>
+				<br />
 					<footer class="app-footer">
 						<div class="row">
 							<div class="col-xs-12">
 								<div class="footer-copyright">
-									Copyright © 2016 Company Co,Ltd.
+									Copyright © 2017 Opiniãopop.
 								</div>
 							</div>
 						</div>
@@ -391,4 +404,8 @@
 		{footerinc}
 
 	</body>
+	
+<?php $this->benchmark->mark('code_end');
+
+echo '<p class="text-center">'.$this->benchmark->elapsed_time('code_start', 'code_end').'</p>'; ?>
 </html>

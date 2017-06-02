@@ -251,27 +251,18 @@ class Crud_model extends CI_Model{
 		if(is_array($parametro)){
 							
 			$this->db->update($table, $dados, $parametro);
-				
-		if ($this->db->error()){
-           return $this->db->error(); 
-        }
-        else
-        {
-            return true;
-        }		
 			
-		} else {
-		
-       	$this->db->where($parametro, $dados[$parametro]);
-        $this->db->update($table, $dados);
-		
-        if ($this->db->error()){
-           return $this->db->error(); 
-        }
-        else
-        {
-            return true;
-        }
+			if($this->db->affected_rows() > 0){				
+			//Salva os dados e escreve uma mensagem				
+			set_msg('msgok','Alteração realizada com sucesso','success');
+			return true;			
+			}		
+				
+        } else {
+        	
+			set_msg('msgerro','Sua alteração não poder ser realizada! Por favor tente novamente.','danger');
+			return false;
+			redirect('dashboard/home');
     }
     
 	

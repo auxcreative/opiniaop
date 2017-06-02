@@ -52,5 +52,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'home';
 $route['dashboard'] = 'dashboard/autenticacao';
 $route['dashboard/enquete/cadastrar/(:any)/(:any)'] = 'dashboard/enquete/cadastrar/$1/$2';
+$route['dashboard/enquete/(:any)'] = 'dashboard/enquete/$1';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

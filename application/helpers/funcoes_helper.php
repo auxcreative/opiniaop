@@ -58,20 +58,24 @@ function init_login() {
 	set_tema('rodape', '<p class="rodape">Opinião Pop; 2017</p>');
 	set_tema('template', 'template_login');
 	
-	set_tema('headerinc', load_css(array('site/css/creative.min', 
-	'site/vendor/bootstrap/css/bootstrap.min', 
+	set_tema('headerinc', load_css(array('site/css/creative.min',  
 	'site/vendor/font-awesome/css/font-awesome.min', 
-	'site/vendor/magnific-popup/magnific-popup', 
+	'site/vendor/magnific-popup/magnific-popup',
+	'site/vendor/bootstrap/css/bootstrap.min', 
 	'site/css/app')), FALSE);
 	
-	set_tema('footerinc', load_js(array('site/vendor/jquery/jquery.min', 
+	set_tema('footerinc', load_js(array(
+	
+	'site/vendor/jquery/jquery.min',
+										'dash/validator/dist/validator.min',
+										'dash/validator/js/validator', 
 	'site/vendor/tether/tether.min', 
-	'site/vendor/bootstrap/js/bootstrap.min', 
 	'site/vendor/jquery-easing/jquery.easing.min', 
 	'site/vendor/scrollreveal/scrollreveal.min', 
 	'site/vendor/magnific-popup/jquery.magnific-popup.min', 
 	'site/js/creative.min',
-	'dash/mask/dist/min/jquery.inputmask.bundle.min')), FALSE);
+	'dash/mask/dist/min/jquery.inputmask.bundle.min',
+	'site/vendor/bootstrap/js/bootstrap.min')), FALSE);
 }
 
 function init_site() {
@@ -98,16 +102,21 @@ function init_dash() {
 
 	$AUX -> load -> library(array('sistema', 'session', 'form_validation', 'parser', 'upload'));
 	$AUX -> load -> helper(array('form', 'url', 'array', 'text', 'html', 'string', 'download', 'date'));
-
+	
+	
+	
 	set_tema('titulo', 'Opiniãopop Painel de administracao');
 	set_tema('rodape', '<p class="rodape">Opiniãopop &copy; 2017</p>');
 	set_tema('template', 'template_dash');
 	set_tema('headerinc', load_css(array(
 						'dash/assets/css/vendor',
 						'dash/assets/css/flat-admin',
-						'dash/assets/css/theme/red')), FALSE);
+						'dash/assets/css/theme/red','site/css/app')), FALSE);
 	
-	set_tema('footerinc', load_js(array('dash/assets/js/vendor',
+	set_tema('footerinc', load_js(array('dash/assets/js/jquery',
+										'dash/validator/dist/validator.min',
+										'dash/validator/js/validator',
+										'dash/assets/js/vendor',
 										'dash/assets/js/app')), FALSE);	
 
 
@@ -143,9 +152,9 @@ function breadcrumb() {
 			$caminho .= $urlString[$i].'/';	
 				//Põe a classe active na última uri e escreve o breadCrumb
 				if($urlString[$i] != end($urlString)):	
-					echo  "<li>".anchor(base_url($caminho),$urlString[$i])."</li>";
+					echo  "<li>".anchor(base_url($caminho), strtr(ucfirst($urlString[$i]),array('_'=>' ','-'=>' ')))."</li>";
 				else:
-					echo  "<li class='active'>".$urlString[$i]."</li>";
+					echo  "<li class='active'>".strtr(ucfirst($urlString[$i]),array('_'=>' ','-'=>' '))."</li>";
 				endif;		
 			$i++;	
 		} while($i < $qtd);
@@ -204,11 +213,10 @@ function load_js($arquivo = NULL, $remoto = FALSE) {
 //Mostra errosde validação
 function erros_validacao($name = NULL) {
 
-	$config['error_prefix'] = 'has-warning';
-	$config['error_suffix'] = '';
-
 	if (validation_errors())
-		echo form_error($name, 'has-warning', '');
+		echo form_error($name, '<div class="alert alert-warning alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>', 
+ '</div>');
 
 }
 
@@ -284,7 +292,7 @@ function esta_logado($redir = TRUE) {
 	if (!isset($status) || $status != TRUE) :
 		if ($redir) :
 			set_msg('notificacao', '<b>Faça seu login</b>', 'info');
-			redirect(base_url('dashboard/login'));
+			redirect(base_url('dashboard/autenticacao/'));
 		else :
 			return FALSE;
 		endif;
@@ -318,7 +326,8 @@ function auditoria($operacao, $obs, $query = TRUE) {
 
 //Define mensagem das telas
 function set_msg($id = 'notificacao', $msg = NULL, $tipo = '') {
-	$AUX = &get_instance();
+	
+	$AUX = & get_instance();
 
 	$AUX -> session -> set_flashdata($id, '<div class="alert alert-' . $tipo . ' alert-dismissible" role="alert">' . '<button type="button" class="close" data-dismiss="alert" arial-label="Close"><span arial-hidden="true">&times;
 	<span></button>' . $msg . '</div>');
@@ -411,133 +420,43 @@ function isActive($pagina = null, $parametro = null) {
 	}
 }
 
-function retirarAcentos($string = null) {
-	if ($string != null) {
 
-		$arrayString = str_split(utf8_decode($string));
-		//Gera array apartir da string com utf8 decodificado
-		//A decodificação é necessária para que o número posicoes criadas
-		// seja igual ao numero de caracteres da string (na UTF-8)
+  function encode_aux($dado)
+{
+    $AUX =& get_instance();	  
+	
+	$AUX->load->library('encryption');
+	  
+    $ret = $AUX->encryption->encrypt($dado);
 
-		$tmp = array();
-		foreach ($arrayString as $char) {
-			$tmp[] = substituiCaractere(utf8_encode($char));
-		}
+        $ret = strtr(
+                $ret,
+                array(
+                    '+' => '.',
+                    '=' => '-',
+                    '/' => '~'
+                )
+            );
 
-		return implode($tmp);
-	}
+    return $ret;
 }
+  function decode_aux($chave)
+{
+       $AUX =& get_instance();
+	   
+	   $AUX->load->library('encryption');
+    
+    	$chave = strtr(
+            
+            $chave,
+            array(
+                '.' => '+',
+                '-' => '=',
+                '~' => '/'
+            )
+        );
 
-function substituiCaractere($char) {
-
-	$strMap = array('á' => 'a', 'à' => 'a', 'ã' => 'a', 'ä' => 'a', 'Á' => 'a', 'À' => 'a', 'Ã' => 'a', 'Ä' => 'a', 'é' => 'e', 'è' => 'e', 'ê' => 'e', 'É' => 'e', 'È' => 'e', 'Ê' => 'e', 'ì' => 'i', 'í' => 'i', 'Ì' => 'i', 'Í' => 'i', 'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'Ó' => 'o', 'Ò' => 'o', 'Ô' => 'o', 'Õ' => 'o', 'Ö' => 'o', 'ú' => 'u', 'ù' => 'u', 'ũ' => 'u', 'ü' => 'u', 'Ú' => 'u', 'Ù' => 'u', 'Ũ' => 'u', 'Ü' => 'u', 'ç' => 'c', 'Ç' => 'c', 'ñ' => 'n', 'Ñ' => 'n', ' ' => '-', '?' => '', '%' => '-porcento', '@' => '', '[' => '', ']' => '', '!' => '', '(' => '', ')' => '');
-
-	foreach ($strMap as $keyMap => $valueMap) {
-		if ($char == $keyMap) {
-			return $valueMap;
-		}
-	}
-	return $char;
-}
-
-function codificarString($string) {
-
-	$prfx = array('AFVxaIF', 'Vzc2ddS', 'ZEca3d1', 'aOdhlVq', 'QhdFmVJ', 'VTUaU5U', 'QRVMuiZ', 'lRZnhnU', 'Hi10dX1', 'GbT9nUV', 'TPnZGZz', 'ZGiZnZG', 'dodHJe5', 'dGcl0NT', 'Y0NeTZy', 'dGhnlNj', 'azc5lOD', 'BqbWedo', 'bFmR0Mz', 'Q1MFjNy', 'ZmFMkdm', 'dkaDIF1', 'hrMaTk3', 'aGVFsbG');
-
-	for ($i = 0; $i < 3; $i++) {
-
-		$string = $prfx[array_rand($prfx)] . strrev(base64_encode($string));
-	}
-	$string = strtr($string, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", "a8rqxPtfiNOlYFGdonMweLCAm0TXERcugBbj79yDVIWsh3Z5vHS46pQzKJ1Uk2");
-	return implode("", explode('=', $string));
-}
-
-function decodificarString($string) {
-	$string = strtr($string, "a8rqxPtfiNOlYFGdonMweLCAm0TXERcugBbj79yDVIWsh3Z5vHS46pQzKJ1Uk2", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-	for ($i = 0; $i < 3; $i++) {
-		$string = base64_decode(strrev(substr($string, 7)));
-	}
-	return $string;
-
-}
-
-//Função de inserir, editar
-function setItem($cod = null, $tab = null, $post = null, $redir = null) {
-
-	$AUX = &get_instance();
-	$AUX -> load -> model('crud_model');
-	$dados = array();
-
-	//INSERT
-	if ($cod == null) {//Verifica se é operacao de update ou insert
-
-		foreach ($post as $key => $value) {//Povoa o array para persistencia
-			$operando = explode('#', $key);
-			if ($operando[0] == 'p') {
-				$dados[$operando[1]] = $value;
-			}
-		}
-
-		$result = $AUX -> crud_model -> insert($tab, $dados);
-		//carrega prox view
-		if (!is_array($result)) {
-			//$result retorna  o ID do item inserido
-			set_msg('notificacao', 'Registro inserido com sucesso', 'success');
-			if ($redir != null)
-				redirect($redir);
-			//volta para gerenciamento de noticias
-		} else {
-			//array $result e carrega proxima view enviando erro para depuração
-
-		}
-
-	}
-	//UPDATE
-	else {
-
-		//Para updates que usam outros parametros que não só o ID
-		if (is_array($cod)) {
-
-			foreach ($post as $key => $value) {//Povoa o array para persistencia
-
-				$operando = explode('#', $key);
-				if ($operando[0] == 'p') {
-					$dados[$operando[1]] = $value;
-				}
-			}
-
-			$result = $AUX -> crud_model -> update($tab, $cod, $dados);
-
-		} else {
-
-			$dados['id'] = decodificarString($cod);
-
-			foreach ($post as $key => $value) {//Povoa o array para persistencia
-				$operando = explode('#', $key);
-				if ($operando[0] == 'p') {
-					$dados[$operando[1]] = $value;
-				}
-			}
-
-			$result = $AUX -> crud_model -> update($tab, "id", $dados);
-
-		}
-		//Faz o retorno e dá a mensagem da situação do cadastro
-		if ($result) {
-			if ($result['code'] == 0) {//Query executada com sucesso
-				//Carrega proxima view
-				set_msg('notificacao', 'Registro atualizado com sucesso', 'success');
-				if ($redir != null)
-					redirect($redir);
-			} else {
-				//Carrega proxima view enviando erro para depuração  (array $result)
-				set_msg('notificacao', 'Erro ao atualizar registro', 'danger');
-				if ($redir != null)
-					redirect($redir);
-			}
-		}
-
-	}
+    return $AUX->encryption->decrypt($chave);
 }
 
 
@@ -576,3 +495,257 @@ function paginacao($url, $tabela, $where = "", $num_page) {
 
 	return $AUX -> pagination -> create_links();
 }
+
+  function msgEmail($nome, $token){
+  	return '<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Opiniãopop - Recuperação de Senha</title>
+        <style media="all" type="text/css">
+ @media screen and (max-width: 600px) {
+table[class="container"] {
+width: 95% !important;
+}
+}
+#outlook a {padding:0;}
+body{width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; margin:0; padding:0;}
+.ExternalClass {width:100%;}
+.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height: 100%;}
+#backgroundTable {margin:0; padding:0; width:100% !important; line-height: 100% !important;}
+img {outline:none; text-decoration:none; -ms-interpolation-mode: bicubic;}
+a img {border:none;}
+.image_fix {display:block;}
+p {margin: 1em 0;}
+h1, h2, h3, h4, h5, h6 {color: black !important;}
+
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {color: blue !important;}
+
+h1 a:active, h2 a:active,  h3 a:active, h4 a:active, h5 a:active, h6 a:active {
+color: red !important;
+}
+
+h1 a:visited, h2 a:visited,  h3 a:visited, h4 a:visited, h5 a:visited, h6 a:visited {
+color: purple !important;
+}
+
+table td {border-collapse: collapse;}
+
+table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+
+a {color: #000;}
+
+@media only screen and (max-device-width: 480px) {
+
+a[href^="tel"], a[href^="sms"] {
+text-decoration: none;
+color: black; /* or whatever your want */
+pointer-events: none;
+cursor: default;
+}
+
+.mobile_link a[href^="tel"], .mobile_link a[href^="sms"] {
+text-decoration: default;
+color: orange !important; /* or whatever your want */
+pointer-events: auto;
+cursor: default;
+}
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+a[href^="tel"], a[href^="sms"] {
+text-decoration: none;
+color: blue; /* or whatever your want */
+pointer-events: none;
+cursor: default;
+}
+
+.mobile_link a[href^="tel"], .mobile_link a[href^="sms"] {
+text-decoration: default;
+color: orange !important;
+pointer-events: auto;
+cursor: default;
+}
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+/* Put your iPhone 4g styles in here */
+}
+
+@media only screen and (-webkit-device-pixel-ratio:.75){
+/* Put CSS for low density (ldpi) Android layouts in here */
+}
+@media only screen and (-webkit-device-pixel-ratio:1){
+/* Put CSS for medium density (mdpi) Android layouts in here */
+}
+@media only screen and (-webkit-device-pixel-ratio:1.5){
+/* Put CSS for high density (hdpi) Android layouts in here */
+}
+/* end Android targeting */
+h2{
+color:#181818;
+font-family:Helvetica, Arial, sans-serif;
+font-size:22px;
+line-height: 22px;
+font-weight: normal;
+}
+a.link1{
+
+}
+a.link2{
+color:#fff;
+text-decoration:none;
+font-family:Helvetica, Arial, sans-serif;
+font-size:16px;
+color:#fff;border-radius:4px;
+}
+p{
+color:#555;
+font-family:Helvetica, Arial, sans-serif;
+font-size:16px;
+line-height:160%;
+}       	
+        </style>
+</head>
+<body>
+	<body>
+		<!-- Wrapper/Container Table: Use a wrapper table to control the width and the background color consistently of your email. Use this approach instead of setting attributes on the body tag. -->
+		<table cellpadding="0" width="100%" cellspacing="0" border="0" id="backgroundTable" class="bgBody">
+			<tr>
+				<td>
+				<table cellpadding="0" width="620" class="container" align="center" cellspacing="0" border="0">
+					<tr>
+						<td><!-- Tables are the most common way to format your email consistently. Set your table widths inside cells and in most cases reset cellpadding, cellspacing, and border to zero. Use nested tables as a way to space effectively in your message. -->
+						<table cellpadding="0" cellspacing="0" border="0" align="center" width="600" class="container">
+							<tr>
+								<td class="movableContentContainer bgItem">
+								<div class="movableContent">
+									<table cellpadding="0" cellspacing="0" border="0" align="center" width="600" class="container">
+										<tr height="40">
+											<td width="200">&nbsp;</td>
+											<td width="200">&nbsp;</td>
+											<td width="200">&nbsp;</td>
+										</tr>
+										<tr>
+											<td width="200" valign="top">&nbsp;</td>
+											<td width="200" valign="top" align="center">
+											<div class="contentEditableContainer contentImageEditable">
+												<div class="contentEditable" align="center" >
+													<img src="http://opiniaopop.com.br/site/img/logo/email.png" width="155" height="155"  alt="Logo"  data-default="placeholder" />
+												</div>
+											</div></td>
+											<td width="200" valign="top">&nbsp;</td>
+										</tr>
+										<tr height="25">
+											<td width="200">&nbsp;</td>
+											<td width="200">&nbsp;</td>
+											<td width="200">&nbsp;</td>
+										</tr>
+									</table>
+								</div>
+								<div class="movableContent">
+									<table cellpadding="0" cellspacing="0" border="0" align="center" width="600" class="container">
+										<tr>
+											<td width="100%" colspan="3" align="center" style="padding-bottom:10px;padding-top:25px;">
+											<div class="contentEditableContainer contentTextEditable">
+												<div class="contentEditable" align="center" >
+													<h2 >Recuperação de Senha</h2>
+												</div>
+											</div></td>
+										</tr>
+										<tr>
+											<td width="100">&nbsp;</td>
+											<td width="400" align="center">
+											<div class="contentEditableContainer contentTextEditable">
+												<div class="contentEditable" align="left" >
+													<p >
+														Oi, '.$nome.' ,
+														<br/>
+														<br/>
+														Acesse seu email com a nova senha abaixo. Assim qe possível altere sua senha para uma mais familiar.
+														<br />
+													</p>
+												</div>
+											</div></td>
+											<td width="100">&nbsp;</td>
+										</tr>
+									</table>
+									<table cellpadding="0" cellspacing="0" border="0" align="center" width="600" class="container">
+										<tr>
+											<td width="200">&nbsp;</td>
+											<td width="200" align="center" style="padding-top:25px;">
+											<table cellpadding="0" cellspacing="0" border="0" align="center" width="200" height="50">
+												<tr>
+													<td bgcolor="#ED006F" align="center" style="border-radius:4px;" width="200" height="50">
+													<div class="contentEditableContainer contentTextEditable">
+														<div class="contentEditable" align="center">
+															<a target="_blank" href="'.base_url("dashboard/autenticacao/alterar_senha_de_usuario/").$token.'" class="link2">Mudar Senha</a>
+														</div>
+													</div></td>
+												</tr>
+											</table></td>
+											<td width="200">&nbsp;</td>
+										</tr>
+									</table>
+								</div>
+								<div class="movableContent">
+									<table cellpadding="0" cellspacing="0" border="0" align="center" width="600" class="container">
+										<tr>
+											<td width="100%" colspan="2" style="padding-top:65px;">
+											<hr style="height:1px;border:none;color:#333;background-color:#ddd;" />
+											</td>
+										</tr>
+										<tr>
+											<td width="60%" height="70" valign="middle" style="padding-bottom:20px;">
+											<div class="contentEditableContainer contentTextEditable">
+												<div class="contentEditable" align="left" >
+													<span style="font-size:13px;color:#181818;font-family:Helvetica, Arial, sans-serif;line-height:200%;">Opiniãopop &copy; 2017 </span>
+													<br/>
+													<span style="font-size:11px;color:#555;font-family:Helvetica, Arial, sans-serif;line-height:200%;">contato@opiniaopop.com.br | 98 999883372</span>
+													<br/>
+													<span style="font-size:13px;color:#181818;font-family:Helvetica, Arial, sans-serif;line-height:200%;"> <a target="_blank" href="[FORWARD]" style="text-decoration:none;color:#555">Não encaminhe ou responda este email</a> </span>
+													<br/>
+													<span style="font-size:13px;color:#181818;font-family:Helvetica, Arial, sans-serif;line-height:200%;"> <a target="_blank" href="[UNSUBSCRIBE]" style="text-decoration:none;color:#555">Não responda este email</a></span>
+												</div>
+											</div></td>
+											<td width="40%" height="70" align="right" valign="top" align="right" style="padding-bottom:20px;"><!--<table width="100%" border="0" cellspacing="0" cellpadding="0" align="right">
+											<tr>
+											<td width="57%"></td>
+											<td valign="top" width="34">
+											<div class="contentEditableContainer contentFacebookEditable" style="display:inline;">
+											<div class="contentEditable" >
+											<img src="images/facebook.png" data-default="placeholder" data-max-width="30" data-customIcon="true" width="30" height="30" alt="facebook" style="margin-right:40x;">
+											</div>
+											</div>
+											</td>
+											<td valign="top" width="34">
+											<div class="contentEditableContainer contentTwitterEditable" style="display:inline;">
+											<div class="contentEditable" >
+											<img src="images/twitter.png" data-default="placeholder" data-max-width="30" data-customIcon="true" width="30" height="30" alt="twitter" style="margin-right:40x;">
+											</div>
+											</div>
+											</td>
+											<td valign="top" width="34">
+											<div class="contentEditableContainer contentImageEditable" style="display:inline;">
+											<div class="contentEditable" >
+											<a target="_blank" href="#" data-default="placeholder"  style="text-decoration:none;">
+											<img src="images/pinterest.png" width="30" height="30" data-max-width="30" alt="pinterest" style="margin-right:40x;" />
+											</a>
+											</div>
+											</div>
+											</td>
+											</tr>
+											</table>--></td>
+										</tr>
+									</table>
+								</div></td>
+							</tr>
+						</table></td>
+					</tr>
+				</table></td>
+			</tr>
+		</table>
+</body>
+</html>';
+  }

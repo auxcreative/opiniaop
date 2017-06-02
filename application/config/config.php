@@ -76,7 +76,7 @@ $config['url_suffix'] = '.html';
 | than english.
 |
 */
-$config['language']	= 'english';
+$config['language']	= 'ptBR';
 
 /*
 |--------------------------------------------------------------------------
@@ -158,7 +158,7 @@ $config['composer_autoload'] = FALSE;
 | DO NOT CHANGE THIS UNLESS YOU FULLY UNDERSTAND THE REPERCUSSIONS!!
 |
 */
-$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
+$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\- +=';
 
 /*
 |--------------------------------------------------------------------------
@@ -314,7 +314,7 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = 'APANtByIGI1)(*&¨%$#@BpVXZTJgcsAG8GZl8pdwwa84';
+$config['encryption_key'] = 'keyopnpop-15xcr21t3v2-%*&¨54!_';
 
 /*
 |--------------------------------------------------------------------------
@@ -438,14 +438,16 @@ $config['global_xss_filtering'] = FALSE;
 | 'csrf_regenerate' = Regenerate token on every submission
 | 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
 */
-$config['csrf_protection'] = TRUE;
+$config['csrf_protection'] = FALSE;
 $config['csrf_token_name'] = 'csrf_test_name';
 $config['csrf_cookie_name'] = 'csrf_cookie_name';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = TRUE;
 $config['csrf_exclude_uris'] = array('dashboard/autenticacao/validacao',
 									 'dashboard/autenticacao/criar_conta',
-									 'dashboard/autenticacao/recupera_senha');
+									 'dashboard/autenticacao/recupera_senha',
+									 'dashboard/usuario/conta',
+									 'dashboard/usuario/alterar_senha');
 
 /*
 |--------------------------------------------------------------------------
@@ -480,7 +482,7 @@ $config['compress_output'] = FALSE;
 | helper' page of the user guide for information regarding date handling.
 |
 */
-$config['time_reference'] = 'local';
+$config['time_reference'] = 'America/Sao_Paulo';
 
 /*
 |--------------------------------------------------------------------------

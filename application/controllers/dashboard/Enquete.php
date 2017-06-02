@@ -24,17 +24,30 @@ class Enquete extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see http://codeigniter.com/user_guide/general/urls.html
 	 */
-	public function index() {
+	public function index($step='') {
 
-		//esta_logado();
+		esta_logado();
 
-		set_tema('conteudo', load_modulo_dash('view_dash_enquete_cadastro'));
+		set_tema('conteudo', load_modulo_dash('view_dash_enquete_tutorial'));
 		load_template();
+
+	}
+
+
+	public function inicio($step='') {
+
+		esta_logado();
+
+		set_tema('conteudo', load_modulo_dash('view_dash_enquete_tutorial'));
+		load_template();
+
 	}
 
 	//função para cadastrar
 
 	public function cadastro($val1='',$val2='',$val3='') {
+		
+		esta_logado();
 
 		//Validação
 		$this -> form_validation -> set_rules('nome', 'Nome do erro', 'required|trim|is_unique["tema.nome"]');
@@ -62,6 +75,9 @@ class Enquete extends CI_Controller {
 	//função para editar
 
 	public function editar() {
+		
+		esta_logado();
+		
 		//Validação
 		$this -> form_validation -> set_rules('name', 'name', 'required|trim');
 
@@ -79,6 +95,8 @@ class Enquete extends CI_Controller {
 	//função para deletar
 
 	public function deletar($id = null) {
+		
+		esta_logado();
 
 		//Dados validados faz o cadastro
 		if ($id != null) {

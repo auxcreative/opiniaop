@@ -29,6 +29,17 @@ class Enquete extends CI_Controller {
 		set_tema('conteudo', load_modulo_site('view_enquete_inicio'));
 		load_template();
 	}
+	
+	public function cadastro(){
+		
+		//esta_logado();
+		
+		
+		set_tema('conteudo', load_modulo_site('view_dash_enquete_cadastro'));
+		load_template();
+		
+		
+	}
 
 
 

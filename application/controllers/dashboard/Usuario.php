@@ -1,10 +1,14 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Usuario extends CI_Controller {
+	
+	
 
     public function __construct(){
         parent::__construct();
-        init_main();
+        init_dash();
+		
+		
 				
     }    
 	/**
@@ -14,151 +18,94 @@ class Usuario extends CI_Controller {
 	 */
 	public function index()	{
 		
-		$this->home();
+		redirect(base_url('dashboard/usuario/conta'));
 	
 	}
 	
-	public function home() {
-  	
-	//set_tema('conteudo', load_modulo_main('view_home'));
-    //load_template();
+	public function conta() {
+		
+	esta_logado();
+	
+	//Id do usuário logado
+	$id_user = $this->session->userdata('user_id');
+	
+	//Faz a chamada do usuário no banco de dados
+	$qryUser = array('select'=>'cliente.*,plano.id as plano_id, plano.nome as plano_nome',
+					 'table'=>'cliente',
+					 'where'=>array('cliente.id' => $id_user),
+					 'join'=>array('plano','plano.id=cliente.id_plano'));
+					 	
+	$dados['usuario'] = $this->crud->select($qryUser)->row(); 
+				
+				
+	$this->form_validation->set_rules('nome','Nome','required');
+	$this->form_validation->set_rules('id_plano','Plano','required');
+	$this->form_validation->set_rules('email','Email','required');
+	$this->form_validation->set_rules('fone','Celular','required|numeric');
+	$this->form_validation->set_rules('ddd','DDD','required|numeric');
+	
+	if($this->form_validation->run()):
+		
+		$dados = elements(array('nome','id_plano','email','fone','status','ddd'), 
+		$this->input->post());
+		
+		$update = $this->crud->update('cliente',array('id'=>$id_user),$dados);
+		
+		redirect('dashboard/usuario/conta');
+	
+	endif;
+	
+	set_tema('conteudo', load_modulo_dash('view_dash_usuario_conta', $dados), FALSE);
+    load_template();
     
-    $this->setItem();
+    
       
   }
 	
-	public function getItem($cod = null){
+	public function alterar_senha(){
 		
-		$this->load->model('crud_model');
+		esta_logado();
 		
-		if($cod == null){ //Select de todas tuplas 
-			$parametrosItem = array(
-	            "select" => "*",
-	            "table" => "xon_usuario",
-	            "where" => "",
-	            "where_not_in"=>null,
-	            "order_by" => "",
-	            "like" => "",
-	            "limit" => "",
-	            "group_by" => "",
-	            "join" => ""
-	        );
+		
+		//Id do usuário logado
+		$id_user = $this->session->userdata('user_id');
+		
+		$this->form_validation->set_rules('password','Senha','required');
+		//Validacao
+		if($this->form_validation->run()){
 			
-			//Obem matriz com os dados
-			$dadosItem = $this->crud_model->select($parametrosItem);
+		$confirma = array('select',
+						   'table'=>'cliente',
+						   'where'=>array('id'=>$id_user,'senha'=>sha1($this->input->post('senha')))
+						   );
+						   
+		$user = $this->crud->select($confirma);
+		
+		
+		if($user->num_rows() > 0):		
+				
+			$this->crud->update('cliente', array('id'=>$id_user, 'senha'=>sha1($this->input->post('senha'))), 
+										  array('senha'=> sha1($this->input->post('password'))));
+							
+			redirect('dashboard/usuario/conta');
+		
+		else:
 			
-			if($dadosItem) {
-				//carrega view com os dados buscados
-				
-			} else {
-				//carrega view informando que não há dados a serem exibidos
-			}
+			set_msg('msgerro','Senha não confere. Por favor entre com a senha correta!','info');
+			redirect('dashboard/usuario/conta');			
+		
+		endif;
 			
-		} else { //Select de tupla específica
-			
-			$parametrosItem = array(
-	            "select" => "*",
-	            "table" => "xon_usuario",
-	            "where" => array('id' => $cod),
-	            "where_not_in"=>null,
-	            "order_by" => "",
-	            "like" => "",
-	            "limit" => "",
-	            "group_by" => "",
-	            "join" => ""
-        	);
-		
-		//Obem matriz com os dados
-		$dadosItem = $this->crud_model->select($parametrosItem);
-		
-		if($dadosItem) {
-				//carrega view com os dados buscados
-				
-			} else {
-				//carrega view informando que não há dados a serem exibidos para a consulta
-				
-			}
-		}
-		
-	}
-	
-	public function setItem($cod = null) {
-		
-		$this->load->model('crud_model');
-
-		if($cod == null) { //Verifica se é operacao de update ou insert 
-			if($_POST){ //Verifica se há dados a inserir
-
-				$dados = array();
-				foreach ($_POST as $key => $value) { //Povoa o array para persistencia
-					$operando = explode('#', $key);	
-					if($operando[0] == 'p') {
-						$dados[$operando[1]] = $value;
-					}
-				}
-							   
-		        $result = $this->crud_model->insert("xon_usuario", $dados);
-				//carrega prox view
-				if(!is_array($result)) {
-					//$result retorna  o ID do item inserido
-					
-				} else {
-					//array $result e carrega proxima view enviando erro para depuração
-				}
-				
-			} else {
-				//rediciona para o formulario de cadastro
-				
-			}
 		} else {
-		
-			if($_POST){ //Verifica se há dados a atualizar
-				
-				$dados = array();
-				foreach ($_POST as $key => $value) {//Povoa o array para persistencia
-					$operando = explode('#', $key);	
-					if($operando[0] == 'p') {
-						$dados[$operando[1]] = $value;
-					}
-				}
-				
-		        $result = $this->crud_model->update("xon_usuario","id", $dados);
-			if($result) {
-				if($result['code'] == 0) {//Query executada com sucesso
-					//Carrega proxima view
-					
-				} else {
-					//Carrega proxima view enviando erro para depuração  (array $result)
-					
-				}
-			}
-				
-			} else {
-				//redireciona para o formulario de edição
-
-			}
+			
+			set_msg('msgerro','Não foi possível alterar sua senha. Por favor tente novamente!','danger');
+			redirect('dashboard/usuario/conta');
 			
 		}
-	}
+		
+		
+		
 	
-	public function removerItem($cod = null){
-		
-		if($cod != null) {
-			$this->load->model('crud_model');
-			
-			$result = $this->crud_model->delete("xon_usuario", "id", array("id" => $cod));
-			if($result) {
-				if($result['code'] == 0) {//Query executada com sucesso
-					//Carrega proxima view
-					
-				} else {
-					//Carrega proxima view enviando erro para depuração  (array $result)
-					
-				}
-			}
-		} else {
-			//redireciona informando que um item precisa ser selecionado para remoção
-		}
 	}
 	
 }

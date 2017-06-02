@@ -76,10 +76,10 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> '',
 	/*
-	'hostname' => 'camaracn.mysql.uhserver.com',
-	'username' => 'admlegiscn',
-	'password' => 'c1m1r1.2017',
-	'database' => 'camaracn',
+	'hostname' => '107.180.58.70',
+	'username' => 'auxopnpop',
+	'password' => '_!We9.#-@}N)',
+	'database' => 'opiniaopop',
 	*/
 	'hostname' => 'localhost',
 	'username' => 'root',
@@ -89,7 +89,7 @@ $db['default'] = array(
 	'dbdriver' => 'mysqli',
 	'dbprefix' => 'opn_',
 	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
+	'db_debug' => (TRUE),
 	'cache_on' => FALSE,
 	'cachedir' => '',
 	'char_set' => 'utf8',
